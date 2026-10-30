@@ -1,4 +1,4 @@
-# New_Waveform_OTFS_6G_Investigaion
+# New_Waveform_OTFDM_6G_Investigaion
 
 ## Orthogonal Time Frequency Multiplexing (OTFDM)
 
