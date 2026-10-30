@@ -31,6 +31,35 @@ These are results and design claims from the paper’s link-level simulations; t
 
 The paper evaluates a 7 GHz carrier, 100/200/400 MHz bandwidths, and 30/60/120 kHz subcarrier spacing (SCS). It considers one-symbol transmissions, one transmit and one receive antenna, and π/2-BPSK, QPSK, 16-QAM, 64-QAM, and 256-QAM. The channels include 3GPP TDL-C with 1 μs and 260 ns delay spreads and a high-speed-train (HST) model. Reported metrics include block error rate (BLER), channel-estimation mean squared error (MSE), RS overhead, and PAPR.
 
+### Test parameter matrix and reproducibility checklist
+
+Use the following as the test matrix when implementing or reproducing the link-level evaluation. Run the paper's stated combinations where practical, and record the exact value of every setting; the paper summary does not specify every implementation detail. Do not treat unspecified settings below as values reported by the paper.
+
+| Parameter | Paper-stated values or test coverage |
+|---|---|
+| Carrier frequency | 7 GHz |
+| Occupied/system bandwidth | 100, 200, and 400 MHz; record the exact definition used and resulting active subcarriers |
+| Subcarrier spacing | 30, 60, and 120 kHz |
+| Transmission length | One OTFDM symbol; test longer bursts separately if the implementation supports them |
+| Antennas | SISO, 1 transmit and 1 receive antenna |
+| Modulation | π/2-BPSK, QPSK, 16-QAM, 64-QAM, and 256-QAM |
+| Channel | 3GPP TDL-C with 1 μs and 260 ns delay spreads, and the paper's HST model |
+| Mobility | Include the paper's reported mobility points/results for each applicable SCS and modulation; for HST, include up to 500 km/h. Record the speed used for every run |
+| RS and excess bandwidth | Use the modulation-specific settings in the table below for the reported TDL-C 1 μs, 30 kHz case; do not assume they apply unchanged to every case |
+| Additional reference signal (ARS) | Compare disabled against the paper's approximately 1–2% resource allocation in the HST/high-mobility case |
+| Waveform baseline | Compare against DFT-s-OFDM with the same payload, modulation, bandwidth, SCS, channel, power convention, and receiver assumptions |
+
+For each run, also pin down and report these controls because they are required for reproducibility but are not fully enumerated in the README's paper summary:
+
+- **Grid and sample generation:** FFT size, active/guard subcarriers, sample rate, cyclic-prefix and cyclic-suffix lengths, RS/data positions and lengths, resource mapping, and any padding.
+- **OTFDM processing:** DFT/IFFT sizes and normalization, excess-bandwidth definition, SQRC filter/roll-off and coefficients, truncation/windowing, and matched-filter/folding implementation. Include extension settings of 0%, 5%, and 10% when reproducing the reported RS/PAPR cases, and state precisely how extension is defined.
+- **Power and receiver:** energy normalization (per data symbol, information bit, or total transmit energy), SNR definition, noise variance, channel-estimation and interpolation method, MMSE equalizer settings, synchronization assumptions, and whether CFO, phase noise, or channel-estimation errors are modeled.
+- **Coding and traffic:** coding scheme/rate or uncoded operation, transport-block size, payload size, and whether results include coding/CRC overhead. Keep these fixed across waveform comparisons.
+- **Sweep and statistics:** SNR range and step, channel realizations, bits/blocks per point, random seeds, stopping rule, and confidence intervals. Use enough errors/trials to make BLER tails and channel-estimation MSE comparisons statistically meaningful.
+- **Metric definitions:** BLER denominator and error event, channel-estimation MSE normalization/reference points, RS/ARS overhead denominator, and PAPR measurement point, oversampling factor, and CCDF sample count. Report PAPR at the 1% CCDF point when comparing with the paper.
+
+Keep the paper's reproduced configuration distinct from any expanded stress tests (for example, multiple antennas, longer bursts, additional impairments, or alternate channels). This avoids presenting a new test assumption as a published OTFDM result.
+
 ## Selected reported results
 
 ### RS overhead and excess bandwidth
